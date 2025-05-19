@@ -1,0 +1,35 @@
+// none
+/*
+
+    0    1    2    3    4    5    6    7
+    +-A--+    +-B--+    +-C--+    +-D--+
+    |5        |5        |5        |5
+    +---------+         +---------+
+    |6                  |6
+    +-------------------+
+    |7
+    |Output
+
+ */
+
+module RED_4x8(
+	input wire[31:0] in
+);
+
+	// Four 4-5 bit adders
+	wire[4:0] A01, B23, C45, D67;
+	wire _0, _1, _2, _3;
+	CLA_4bit A(.Sum(A01[3:0]), .G(A01[4]), .P(_0), .A(in[3:0], .B(in[7:4]), .CarryIn(1'b0));
+	CLA_4bit B(.Sum(B23[3:0]), .G(B23[4]), .P(_1), .A(in[11:8], .B(in[15:12]), .CarryIn(1'b0));
+	CLA_4bit C(.Sum(C45[3:0]), .G(C45[4]), .p(_2), .A(in[19:16], .B(in[23:20]), .CarryIn(1'b0));
+	CLA_4bit D(.Sum(D67[3:0]), .G(D67[4]), .P(_3), .A(in[27:24], .B(in[31:28]), .CarryIn(1'b0));
+
+	// Two 5-6 bit adders
+	wire[5:0] E0123, F4567;
+	CLA_5bit E(.Sum(E0123), .A(A01), .B(B23));
+	CLA_5bit F(.Sum(F4567), .A(A01), .B(B23));
+
+	// Well I'm unsure how this is supposed to work.
+
+endmodule
+// wire

@@ -1,0 +1,109 @@
+###################################
+# Read in the verilog files first #
+###################################
+read_file -format verilog { cpu.v }
+read_file -format verilog { Fetch.v }
+read_file -format verilog { PC.v }
+read_file -format verilog { D-flip-flop.v }
+read_file -format verilog { CLA_1bit.v }
+read_file -format verilog { CLA_4bit.v }
+read_file -format verilog { CLA_5bit.v }
+read_file -format verilog { CLA_16bit.v }
+read_file -format verilog { memory.v }
+read_file -format verilog { IF_ID_Pipeline_Reg.v }
+read_file -format verilog { DecodeStage.v }
+read_file -format verilog { InstrDecoder.v }
+read_file -format verilog { Register.v }
+read_file -format verilog { RegisterFile.v }
+read_file -format verilog { BitCell.v }
+read_file -format verilog { ReadDecoder_4_16.v }
+read_file -format verilog { Decoder_2_4.v }
+read_file -format verilog { WriteDecoder_4_16.v }
+read_file -format verilog { Flags.v }
+read_file -format verilog { Branch.v }
+read_file -format verilog { ID_EX_Pipeline_Reg.v }
+read_file -format verilog { ExecuteStage.v }
+read_file -format verilog { alu.v }
+read_file -format verilog { ReductionUnit.v }
+read_file -format verilog { shifter.v }
+read_file -format verilog { PADDSB.v }
+read_file -format verilog { addsb_4bit.v }
+read_file -format verilog { EX_MEM_Pipeline_Reg.v }
+read_file -format verilog { MEM_WB_Pipeline_Reg.v }
+read_file -format verilog { full_adder_1bit.v }
+read_file -format verilog { MemoryStage.v }
+read_file -format verilog { WriteBack.v }
+read_file -format verilog { bpcache.v }
+read_file -format verilog { MemoryArbiter.v }
+read_file -format verilog { multicycle_memory.v }
+read_file -format verilog { cache.v }
+read_file -format verilog { DataArray.v }
+read_file -format verilog { MetaDataArray.v }
+read_file -format verilog { Decoder_3_8.v }
+read_file -format verilog { Decoder_6_64.v }
+read_file -format verilog { cache_fill_FSM.v }
+
+# Set current design to top level #
+###################################
+set current_design cpu
+link
+
+##############################
+# Constrain and assign clock #
+##############################
+create_clock -name "clk" -period 2 -waveform {0 1} {clk}
+set_dont_touch_network [find port clk]
+
+###############
+# False Paths #
+###############
+set_fix_hold [find net clk]
+
+
+##############################################
+# Constrain input timings and drive strength #
+##############################################
+set prim_inputs [remove_from_collection [all_inputs] [find port clk]]
+set_input_delay -clock clk 0.4 $prim_inputs
+set_driving_cell -lib_cell NAND2X2_LVT -library saed32lvt_tt0p85v25c $prim_inputs
+set_dont_touch_network [find port rst_n]
+
+#####################################
+# Constrain output timings and load #
+#####################################
+set_output_delay -clock clk 0.4 [all_outputs]
+set_load 0.1 [all_outputs]
+
+####################################
+# Set wireload and transition time #
+####################################
+set_wire_load_model -name 16000 -library saed32lvt_tt0p85v2c
+set_max_transition 0.15 [current_design]
+
+######################
+# Compile the design #
+######################
+compile -map_effort cpu
+
+################################################
+# Flatten the design, so there is no hierarchy #
+################################################
+ungroup -all -flatten
+
+############################
+# Second and Third compile #
+############################
+
+############################################
+# Produce min, max reports and area report #
+############################################
+report_timing -delay max > timing_max.txt
+report_timing -delay min > timing_min.txt
+report_area > area_report.txt
+
+###########################################
+# Write out resulting synthesized netlist #
+###########################################
+write -format verilog -output cpu.vg
+
+exit

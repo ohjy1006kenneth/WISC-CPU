@@ -1,0 +1,8 @@
+../core/cache_fill_FSM.v:99: warning: Port 1 (Sum) of CLA_16bit expects 16 bits, got 3.
+../core/cache_fill_FSM.v:99:        : Padding 13 high bits of the port.
+../core/cache_fill_FSM.v:99: warning: Port 3 (A) of CLA_16bit expects 16 bits, got 3.
+../core/cache_fill_FSM.v:99:        : Padding 13 high bits of the port.
+../core/cache_fill_FSM.v:99: warning: Port 1 (Sum) of CLA_16bit expects 16 bits, got 3.
+../core/cache_fill_FSM.v:99:        : Padding 13 high bits of the port.
+../core/cache_fill_FSM.v:99: warning: Port 3 (A) of CLA_16bit expects 16 bits, got 3.
+../core/cache_fill_FSM.v:99:        : Padding 13 high bits of the port.

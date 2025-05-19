@@ -1,0 +1,13 @@
+Stall if:
+ID/EX.MemToReg &&							There is a load currently going through EX
+ID/EX.RegDST != 0 &&							The load doesn't discard the result
+(									Check register dependencies
+(ID/EX.RegDst == SrcReg1 && (~Instr[15]|~Instr[14])) |			Stall if the EX stage uses SR1
+(ID/EX.RegDst == SrcReg2 && ~Instr[15])					Stall if EX stage uses SR2
+)
+
+Stall twice if:				Stall twice if
+IF/EX.MemToReg &&			The previous instruction was a load
+ID/EX.RegDst != 0 &&			Not to r0
+ID/EX.RegDst==SRcReg1 &&		To the same register we're wanting to read now
+Instr[15:12] == 1101			In decode for BR
